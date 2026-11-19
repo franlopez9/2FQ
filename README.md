@@ -2,7 +2,7 @@
 
 App sencilla para **tomar órdenes** y llevar el control del día en una pupusería, desde el celular.
 
-👉 **Probala aquí:** https://franlopez9.github.io/ord-tak/
+👉 **Probala aquí:** https://franlopez9.github.io/2FQ/
 
 > 🚧 **En desarrollo.** Por ahora la app sirve para tomar órdenes y llevar las cuentas. **No procesa pagos**: solo registra cómo pagó el cliente. La integración con pasarela de pago viene más adelante.
 
