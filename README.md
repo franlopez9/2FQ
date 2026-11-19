@@ -1,4 +1,4 @@
-# 🫓 2FQ (Too Fast & Quck) — POS para Pupuserías
+# 🫓 2FQ (Too Fast & Quick) — POS para Pupuserías
 
 App sencilla para **tomar órdenes** y llevar el control del día en una pupusería, desde el celular.
 
