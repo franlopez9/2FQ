@@ -1,52 +1,48 @@
-# 🫓 2FQ (Too Fast & Quick) — POS para Pupuserías
+# 🫓 2FQ — Too Fast & Quick
 
-App sencilla para **tomar órdenes** y llevar el control del día en una pupusería, desde el celular.
+Sistema ágil para **tomar órdenes en plancha** y llevar el **control financiero diario** de una pupusería desde celular, tablet o computadora.
 
 👉 **Probala aquí:** https://franlopez9.github.io/2FQ/
 
-> 🚧 **En desarrollo.** Por ahora la app sirve para tomar órdenes y llevar las cuentas. **No procesa pagos**: solo registra cómo pagó el cliente. La integración con pasarela de pago viene más adelante.
+> 🚧 **Estado: Alpha.** Actualmente la app gestiona pedidos en tiempo real, subcuentas y control de caja/gastos. *No procesa cobros con tarjeta directamente: registra el método con el que pagó el cliente y muestra tu QR bancario.*
 
-## ¿Qué hace hoy?
+---
 
-- **Órdenes por mesa, para llevar o delivery** (12 mesas + barra)
-- **Comanda táctil** con pupusas de maíz o arroz, y bebidas
-- **Registro de forma de pago:** efectivo, Wompi, transferencia o fiado
-- **Dividir la cuenta** entre varias personas
-- **Gastos del día:** quesillo, masa, gas, verduras, desechables, ayudante
-- **Libreta de fiados** para anotar y cobrar deudas
-- **Cierre de caja:** cuánto efectivo debe haber al final del día
+## ✨ ¿Qué hace hoy?
 
-## Próximamente
+- **Tablero de Plancha (Activas):** Vista principal con contador en vivo de órdenes en preparación vs. órdenes completadas en el turno.
+- **Órdenes por modalidad y cliente:** Soporte para *Comer aquí* (mesas configurables + barra), *Para llevar* y *Delivery*, con registro de cliente desde el inicio.
+- **Catálogo completo salvadoreño:** Más de 40 especialidades organizadas por categoría (*Clásicas, Hierbas y Veg., Carnes, Mariscos, Gourmet, Dulces y Bebidas*) con selector independiente de **Maíz** o **Arroz**.
+- **Subcuentas por comensal (Unir o separar cuentas):** Permite separar pedidos por amigo dentro de una misma mesa y, al cobrar, liquidar individualmente, unir varios amigos en un solo pago o dividir en partes iguales.
+- **Cobros y QR Bancario:** Registro de pagos en *Efectivo, Wompi/POS, Transferencia* (mostrando tu QR y número de cuenta en pantalla) o *Fiado*.
+- **Control de Gastos y Arqueo:** Registro por categoría (*quesillo, masa, carnes, verduras, gas, luz/agua, alquiler, desechables, personal*) y cierre de caja por día, semana o mes.
+- **Libreta de Clientes y Fiados:** Historial de saldos pendientes con recordatorio directo por WhatsApp.
+- **Configuración visual sin tocar código:** Asistente inicial paso a paso y menú de ajustes (`⚙️`) para personalizar nombre, logo, mesas, precios, sencillo inicial y QR bancario.
 
-- [ ] Integración con pasarela de pago (cobro directo desde la app)
-- [ ] Guardar datos en la nube para usar en varios dispositivos
+---
 
-## Cómo usarla
+## 🚀 Próximamente
 
-1. Abrí el link en el celular.
-2. En el menú del navegador, elegí **"Agregar a pantalla de inicio"** para usarla como app.
-3. Listo, no necesita instalación ni cuenta.
+- 📦 **Modo Offline instalable (PWA):** `manifest.json` y *Service Worker* para operar 100% sin internet y bloquear tablets en Modo Kiosco.
+- ☁️ **Respaldo en la nube:** Sincronización multi-dispositivo (plancha + caja).
+- 💳 **Integración directa con pasarela de pago.**
 
-> ⚠️ Los datos se guardan **solo en el navegador de ese dispositivo**. Si borrás los datos del navegador o cambiás de celular, se pierden.
+---
 
-## Cambiar el menú o los precios
+## 📱 Cómo usarla
 
-Todo está en `index.html`. Buscá la lista `MENU` y editá nombres o precios:
+1. Abrí el enlace desde el navegador de tu tablet, celular o computadora: `https://franlopez9.github.io/2FQ/`
+2. En el menú del navegador, elegí **"Agregar a pantalla de inicio"** para usarla a pantalla completa como app.
+3. Completá la configuración inicial de tu pupusería en menos de un minuto (menú, mesas y QR).
 
-```js
-{ id: 'queso', nombre: 'Queso', emoji: '🧀', precioMaiz: 1.25, precioArroz: 1.50, esPupusa: true },
-```
+> ⚠️ **Nota sobre los datos:** Por ahora toda la información se guarda localmente en el navegador de ese dispositivo (`localStorage`). Si borrás los datos de navegación o cambiás de equipo, los registros se reinician.
 
-**Importante:** el `id` no puede llevar guion bajo (`_`).
+---
 
-## ¿Querés mejorarla?
+## 🛠️ Personalización avanzada (Opcional)
 
-1. Hacé **Fork** de este repositorio.
-2. Hacé tus cambios en tu copia.
-3. Mandame un **Pull Request** con lo que cambiaste y por qué.
+Todos los precios, mesas, logo y catálogo se configuran directamente desde el botón **⚙️** dentro de la app.  
+Si querés modificar el catálogo base por defecto para nuevas instalaciones, editá el arreglo `MENU_INICIAL` dentro de `index.html`:
 
-## Hecha con
-
-- HTML + React 18
-- Tailwind CSS
-- Todo en un solo archivo (`index.html`)
+```javascript
+{ id: 'revuelta', cat: 'clasicas', nombre: 'Revuelta', desc: 'Chicharrón, frijol y queso', emoji: '🫓', precioMaiz: 1.00, precioArroz: 1.25, esPupusa: true, activo: true }
