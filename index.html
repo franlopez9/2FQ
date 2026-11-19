@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Pupusería POS - Apple Liquid Glass Edition</title>
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="2FQ" />
+  <title>2FQ — Too Fast & Quick</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -212,7 +216,7 @@
     ];
 
     function App() {
-      const [config, setConfig] = useState(() => leerDeStorage('pupuseria_config_v4', null));
+      const [config, setConfig] = useState(() => leerDeStorage('2fq_config_v1', null));
       const [editandoConfig, setEditandoConfig] = useState(false);
       const [pasoOnboarding, setPasoOnboarding] = useState(0);
 
@@ -246,9 +250,7 @@
       const [modalServicio, setModalServicio] = useState(false);
       const [modalComanda, setModalComanda] = useState(false);
       const [modalCobrarActiva, setModalCobrarActiva] = useState(null);
-      const [modalDividir, setModalDividir] = useState(false);
       const [modalVerQr, setModalVerQr] = useState(false);
-      const [personasDividir, setPersonasDividir] = useState(2);
 
       const [tipoServicio, setTipoServicio] = useState('mesa');
       const [mesaSeleccionada, setMesaSeleccionada] = useState(1);
@@ -256,31 +258,42 @@
       const [telefonoCliente, setTelefonoCliente] = useState('');
       const [direccionCliente, setDireccionCliente] = useState('');
 
+      const [comensalesList, setComensalesList] = useState(['General']);
+      const [comensalActivo, setComensalActivo] = useState('General');
+      const [itemsByComensal, setItemsByComensal] = useState({ General: {} });
+      const [nuevoComensalInput, setNuevoComensalInput] = useState('');
+      const [mostrandoInputComensal, setMostrandoInputComensal] = useState(false);
+
+      const [modoCobroActiva, setModoCobroActiva] = useState('todo');
+      const [comensalesSeleccionadosCobro, setComensalesSeleccionadosCobro] = useState([]);
+      const [personasDividirActiva, setPersonasDividirActiva] = useState(2);
+
       const [ordenActivaEditandoId, setOrdenActivaEditandoId] = useState(null);
-      const [ordenActual, setOrdenActual] = useState({});
       const [estadoPagoInicial, setEstadoPagoInicial] = useState('pendiente');
       const [metodoPago, setMetodoPago] = useState('efectivo');
 
-      const [contadorOrden, setContadorOrden] = useState(() => leerDeStorage('pup_contador_orden_v4', 1));
-      const [ordenesActivas, setOrdenesActivas] = useState(() => leerDeStorage('pup_ordenes_activas_v4', []));
-      const [ordenesCompletadasHoy, setOrdenesCompletadasHoy] = useState(() => leerDeStorage('pup_completadas_v4', []));
-      const [transacciones, setTransacciones] = useState(() => leerDeStorage('pup_transacciones_v4', []));
-      const [gastos, setGastos] = useState(() => leerDeStorage('pup_gastos_v4', []));
-      const [clientes, setClientes] = useState(() => leerDeStorage('pup_clientes_v4', []));
+      const [contadorOrden, setContadorOrden] = useState(() => leerDeStorage('2fq_contador_orden_v1', 1));
+      const [ordenesActivas, setOrdenesActivas] = useState(() => leerDeStorage('2fq_ordenes_activas_v1', []));
+      const [ordenesCompletadasHoy, setOrdenesCompletadasHoy] = useState(() => leerDeStorage('2fq_completadas_v1', []));
+      const [transacciones, setTransacciones] = useState(() => leerDeStorage('2fq_transacciones_v1', []));
+      const [gastos, setGastos] = useState(() => leerDeStorage('2fq_gastos_v1', []));
+      const [clientes, setClientes] = useState(() => leerDeStorage('2fq_clientes_v1', []));
 
       const [montoGasto, setMontoGasto] = useState('');
       const [catGasto, setCatGasto] = useState(GASTOS_CATEGORIAS[0].id);
       const [gastoEditandoId, setGastoEditandoId] = useState(null);
 
-      const itemsTotalCount = Object.values(ordenActual).reduce((a, b) => a + b, 0);
+      const itemsTotalCount = Object.values(itemsByComensal).reduce((acc, subMap) => {
+        return acc + Object.values(subMap || {}).reduce((a, b) => a + b, 0);
+      }, 0);
 
-      useEffect(() => { if (config) guardarEnStorage('pupuseria_config_v4', config); }, [config]);
-      useEffect(() => { guardarEnStorage('pup_contador_orden_v4', contadorOrden); }, [contadorOrden]);
-      useEffect(() => { guardarEnStorage('pup_ordenes_activas_v4', ordenesActivas); }, [ordenesActivas]);
-      useEffect(() => { guardarEnStorage('pup_completadas_v4', ordenesCompletadasHoy); }, [ordenesCompletadasHoy]);
-      useEffect(() => { guardarEnStorage('pup_transacciones_v4', transacciones); }, [transacciones]);
-      useEffect(() => { guardarEnStorage('pup_gastos_v4', gastos); }, [gastos]);
-      useEffect(() => { guardarEnStorage('pup_clientes_v4', clientes); }, [clientes]);
+      useEffect(() => { if (config) guardarEnStorage('2fq_config_v1', config); }, [config]);
+      useEffect(() => { guardarEnStorage('2fq_contador_orden_v1', contadorOrden); }, [contadorOrden]);
+      useEffect(() => { guardarEnStorage('2fq_ordenes_activas_v1', ordenesActivas); }, [ordenesActivas]);
+      useEffect(() => { guardarEnStorage('2fq_completadas_v1', ordenesCompletadasHoy); }, [ordenesCompletadasHoy]);
+      useEffect(() => { guardarEnStorage('2fq_transacciones_v1', transacciones); }, [transacciones]);
+      useEffect(() => { guardarEnStorage('2fq_gastos_v1', gastos); }, [gastos]);
+      useEffect(() => { guardarEnStorage('2fq_clientes_v1', clientes); }, [clientes]);
 
       useEffect(() => {
         if (modalComanda && itemsTotalCount === 0) {
@@ -327,10 +340,10 @@
           menu: Array.isArray(formConfig.menu) && formConfig.menu.length > 0 ? formConfig.menu : MENU_INICIAL
         };
 
-        const guardadoOk = guardarEnStorage('pupuseria_config_v4', finalConfig);
+        const guardadoOk = guardarEnStorage('2fq_config_v1', finalConfig);
         if (!guardadoOk) {
           const sinImagenes = { ...finalConfig, logo: '', bancoQr: '' };
-          guardarEnStorage('pupuseria_config_v4', sinImagenes);
+          guardarEnStorage('2fq_config_v1', sinImagenes);
           setConfig(sinImagenes);
         } else {
           setConfig(finalConfig);
@@ -347,7 +360,6 @@
         setEditandoConfig(true);
       };
 
-      // ======================== VISTA ONBOARDING CINEMÁTICO ========================
       if (!config || editandoConfig) {
         const listaMenuConfig = Array.isArray(formConfig.menu) ? formConfig.menu : MENU_INICIAL;
         const menuConfigFiltrado = filtroMenuConfig === 'todas'
@@ -390,13 +402,14 @@
 
             {pasoOnboarding === 0 && (
               <div key="step0" className="animate-apple my-auto text-center space-y-6 py-8">
-                <div className="w-24 h-24 mx-auto rounded-[2rem] liquid-glass flex items-center justify-center text-5xl shadow-xl">
-                  🫓
+                <div className="w-24 h-24 mx-auto rounded-[2rem] liquid-glass-dark flex flex-col items-center justify-center shadow-xl">
+                  <span className="text-3xl font-black tracking-tighter text-white leading-none">2FQ</span>
+                  <span className="text-[7px] font-bold uppercase tracking-widest text-amber-400 mt-1">Too Fast & Quick</span>
                 </div>
                 <div className="space-y-2 max-w-md mx-auto">
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-neutral-500">Pupusería POS</p>
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-neutral-500">Too Fast & Quick</p>
                   <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-neutral-900 leading-tight">
-                    Tu plancha y tu caja, bajo control total.
+                    Órdenes rápidas en plancha. Cuentas claras en caja.
                   </h1>
                   <p className="text-sm text-neutral-600 leading-relaxed pt-1">
                     Configura tu pupusería en menos de un minuto. Personaliza tu menú, mesas, QR bancario y lleva el control exacto de cada dólar.
@@ -796,7 +809,7 @@
                     onClick={guardarConfiguracion}
                     className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-black text-sm shadow-xl active:scale-98 transition"
                   >
-                    ✓ Guardar y Empezar
+                    ✓ Guardar y Empezar con 2FQ
                   </button>
                 )}
               </div>
@@ -805,7 +818,6 @@
         );
       }
 
-      // ======================== LÓGICA OPERATIVA DEL POS ========================
       const listaMenuSegura = Array.isArray(config.menu) ? config.menu : MENU_INICIAL;
       const menuActivo = listaMenuSegura.filter(m => m.activo);
       const menuVisiblePos = menuActivo.filter(m => {
@@ -826,8 +838,25 @@
 
       const formatearNumeroOrden = (num) => `#${String(num).padStart(2, '0')}`;
 
-      const generarResumenTexto = (itemsObj) => {
-        return Object.entries(itemsObj).map(([key, cant]) => {
+      const calcularMontoMapa = (itemsObj) => {
+        return Object.entries(itemsObj || {}).reduce((total, [key, cant]) => {
+          const [prodId, masa] = key.split('|');
+          const prod = listaMenuSegura.find(m => m.id === prodId);
+          if (!prod) return total;
+          const precio = prod.esPupusa ? (masa === 'arroz' ? prod.precioArroz : prod.precioMaiz) : prod.precio;
+          return total + (precio * cant);
+        }, 0);
+      };
+
+      const generarTextoUnificadoPlancha = (subcuentasObj) => {
+        const combinado = {};
+        Object.values(subcuentasObj || {}).forEach(subMap => {
+          Object.entries(subMap || {}).forEach(([key, cant]) => {
+            combinado[key] = (combinado[key] || 0) + cant;
+          });
+        });
+
+        return Object.entries(combinado).map(([key, cant]) => {
           const [prodId, masa] = key.split('|');
           const prod = listaMenuSegura.find(m => m.id === prodId);
           if (!prod) return '';
@@ -836,31 +865,40 @@
         }).filter(Boolean).join(', ');
       };
 
-      const ajustarCantidad = (itemKey, cambio) => {
-        setOrdenActual(prev => {
-          const actual = prev[itemKey] || 0;
+      const ajustarCantidad = (itemKey, cambio, comensalObjetivo = comensalActivo) => {
+        setItemsByComensal(prev => {
+          const subActual = prev[comensalObjetivo] || {};
+          const actual = subActual[itemKey] || 0;
           const nuevo = actual + cambio;
+          const copiaSub = { ...subActual };
           if (nuevo <= 0) {
-            const copia = { ...prev };
-            delete copia[itemKey];
-            return copia;
+            delete copiaSub[itemKey];
+          } else {
+            copiaSub[itemKey] = nuevo;
           }
-          return { ...prev, [itemKey]: nuevo };
+          return { ...prev, [comensalObjetivo]: copiaSub };
         });
       };
 
-      const totalOrden = Object.entries(ordenActual).reduce((total, [key, cant]) => {
-        const [prodId, masa] = key.split('|');
-        const prod = listaMenuSegura.find(m => m.id === prodId);
-        if (!prod) return total;
-        const precio = prod.esPupusa ? (masa === 'arroz' ? prod.precioArroz : prod.precioMaiz) : prod.precio;
-        return total + (precio * cant);
-      }, 0);
+      const agregarComensal = (nombrePersonalizado) => {
+        const nombreLimpio = (nombrePersonalizado || nuevoComensalInput).trim() || `Amigo ${comensalesList.length + 1}`;
+        if (!comensalesList.includes(nombreLimpio)) {
+          setComensalesList(prev => [...prev, nombreLimpio]);
+          setItemsByComensal(prev => ({ ...prev, [nombreLimpio]: prev[nombreLimpio] || {} }));
+        }
+        setComensalActivo(nombreLimpio);
+        setNuevoComensalInput('');
+        setMostrandoInputComensal(false);
+      };
 
-      // Iniciar Nueva Orden: limpia estado y abre directamente el modal de modalidad + nombre del cliente
+      const totalOrden = Object.values(itemsByComensal).reduce((acc, subMap) => acc + calcularMontoMapa(subMap), 0);
+      const ordenActualComensal = itemsByComensal[comensalActivo] || {};
+
       const iniciarNuevaOrden = () => {
         setOrdenActivaEditandoId(null);
-        setOrdenActual({});
+        setComensalesList(['General']);
+        setComensalActivo('General');
+        setItemsByComensal({ General: {} });
         setNombreCliente('');
         setTelefonoCliente('');
         setDireccionCliente('');
@@ -869,9 +907,35 @@
         setModalServicio(true);
       };
 
+      const confirmarModalidadYCliente = () => {
+        const nombreCli = nombreCliente.trim();
+        if (nombreCli && comensalesList.length === 1 && comensalesList[0] === 'General') {
+          const itemsGen = itemsByComensal['General'] || {};
+          setComensalesList([nombreCli]);
+          setComensalActivo(nombreCli);
+          setItemsByComensal({ [nombreCli]: itemsGen });
+        }
+        setModalServicio(false);
+      };
+
       const iniciarEdicionOrdenActiva = (orden) => {
         setOrdenActivaEditandoId(orden.id);
-        setOrdenActual(orden.itemsMap ? { ...orden.itemsMap } : {});
+        if (orden.subcuentas && Object.keys(orden.subcuentas).length > 0) {
+          const listaNombres = Object.keys(orden.subcuentas);
+          const mapaItems = {};
+          listaNombres.forEach(nom => {
+            mapaItems[nom] = { ...(orden.subcuentas[nom].itemsMap || {}) };
+          });
+          setComensalesList(listaNombres);
+          setComensalActivo(listaNombres[0]);
+          setItemsByComensal(mapaItems);
+        } else {
+          const nom = orden.clienteNombre || 'General';
+          setComensalesList([nom]);
+          setComensalActivo(nom);
+          setItemsByComensal({ [nom]: orden.itemsMap ? { ...orden.itemsMap } : {} });
+        }
+
         setTipoServicio(orden.tipoServicio || 'mesa');
         if (orden.mesaSeleccionada) setMesaSeleccionada(orden.mesaSeleccionada);
         setNombreCliente(orden.clienteNombre || '');
@@ -882,14 +946,16 @@
 
       const cancelarEdicionOrdenActiva = () => {
         setOrdenActivaEditandoId(null);
-        setOrdenActual({});
+        setComensalesList(['General']);
+        setComensalActivo('General');
+        setItemsByComensal({ General: {} });
         setVista('activas');
       };
 
       const guardarEdicionOrdenActiva = () => {
         if (!ordenEditando || totalOrden <= 0) return;
 
-        const nuevoDetalle = generarResumenTexto(ordenActual);
+        const nuevoDetalle = generarTextoUnificadoPlancha(itemsByComensal);
         const sufijoCliente = nombreCliente.trim() ? ` (${nombreCliente.trim()})` : '';
         let nuevoDestino = '';
         if (tipoServicio === 'mesa') nuevoDestino = (mesaSeleccionada === 'barra' ? 'Barra' : `Mesa #${mesaSeleccionada}`) + sufijoCliente;
@@ -898,43 +964,44 @@
 
         setOrdenesActivas(prev => prev.map(o => {
           if (o.id !== ordenEditando.id) return o;
-          const yaPagado = o.montoPagado || 0;
-          const diferencia = totalOrden - yaPagado;
 
-          if (yaPagado > 0) {
-            return {
-              ...o,
-              tipoServicio,
-              mesaSeleccionada,
-              destino: nuevoDestino,
-              clienteNombre: nombreCliente.trim(),
-              clienteTel: telefonoCliente.trim(),
-              clienteDir: direccionCliente.trim(),
-              itemsMap: { ...ordenActual },
-              detalle: nuevoDetalle,
-              monto: totalOrden,
-              saldoPendiente: diferencia > 0 ? diferencia : 0,
-              pagada: diferencia <= 0
+          const subcuentasActualizadas = {};
+          let totalPagadoAcumulado = 0;
+
+          Object.entries(itemsByComensal).forEach(([nomComensal, subMap]) => {
+            const montoSub = calcularMontoMapa(subMap);
+            if (montoSub <= 0 && !o.subcuentas?.[nomComensal]?.pagada) return;
+            const previa = o.subcuentas?.[nomComensal];
+            const estabaPagada = previa?.pagada && Math.abs((previa?.monto || 0) - montoSub) < 0.01;
+            if (estabaPagada) totalPagadoAcumulado += montoSub;
+
+            subcuentasActualizadas[nomComensal] = {
+              itemsMap: { ...subMap },
+              monto: montoSub,
+              pagada: Boolean(estabaPagada),
+              metodoPago: estabaPagada ? previa.metodoPago : null
             };
-          } else {
-            return {
-              ...o,
-              tipoServicio,
-              mesaSeleccionada,
-              destino: nuevoDestino,
-              clienteNombre: nombreCliente.trim(),
-              clienteTel: telefonoCliente.trim(),
-              clienteDir: direccionCliente.trim(),
-              itemsMap: { ...ordenActual },
-              detalle: nuevoDetalle,
-              monto: totalOrden,
-              saldoPendiente: totalOrden,
-              pagada: false
-            };
-          }
+          });
+
+          const saldoRestante = Math.max(0, totalOrden - totalPagadoAcumulado);
+
+          return {
+            ...o,
+            tipoServicio,
+            mesaSeleccionada,
+            destino: nuevoDestino,
+            clienteNombre: nombreCliente.trim(),
+            clienteTel: telefonoCliente.trim(),
+            clienteDir: direccionCliente.trim(),
+            subcuentas: subcuentasActualizadas,
+            detalle: nuevoDetalle,
+            monto: totalOrden,
+            montoPagado: totalPagadoAcumulado,
+            saldoPendiente: saldoRestante,
+            pagada: saldoRestante <= 0.01
+          };
         }));
 
-        setOrdenActual({});
         setOrdenActivaEditandoId(null);
         setVista('activas');
       };
@@ -997,10 +1064,23 @@
         else if (tipoServicio === 'llevar') destino = `Llevar: ${nombreCliente.trim() || 'Mostrador'}`;
         else destino = `Delivery: ${nombreCliente.trim() || 'Cliente'}${direccionCliente ? ` (${direccionCliente})` : ''}`;
 
-        const itemsTexto = generarResumenTexto(ordenActual);
+        const itemsTexto = generarTextoUnificadoPlancha(itemsByComensal);
         const yaPagado = estadoPagoInicial === 'pagado';
         const esFiado = yaPagado && metodoPago === 'fiado';
         let txId = null;
+
+        const subcuentasObj = {};
+        Object.entries(itemsByComensal).forEach(([nomComensal, subMap]) => {
+          const montoSub = calcularMontoMapa(subMap);
+          if (montoSub > 0) {
+            subcuentasObj[nomComensal] = {
+              itemsMap: { ...subMap },
+              monto: montoSub,
+              pagada: yaPagado,
+              metodoPago: yaPagado ? metodoPago : null
+            };
+          }
+        });
 
         if (yaPagado) {
           if (esFiado) {
@@ -1038,7 +1118,7 @@
           clienteNombre: nombreCliente.trim(),
           clienteTel: telefonoCliente.trim(),
           clienteDir: direccionCliente.trim(),
-          itemsMap: { ...ordenActual },
+          subcuentas: subcuentasObj,
           detalle: itemsTexto,
           monto: totalOrden,
           montoPagado: yaPagado ? totalOrden : 0,
@@ -1049,21 +1129,62 @@
 
         setOrdenesActivas(prev => [nuevaActiva, ...prev]);
         setContadorOrden(prev => prev + 1);
-        setOrdenActual({});
+        setComensalesList(['General']);
+        setComensalActivo('General');
+        setItemsByComensal({ General: {} });
         setEstadoPagoInicial('pendiente');
         setModalComanda(false);
         setVista('activas');
       };
 
-      const cobrarOrdenActiva = (orden, metodoElegido) => {
+      const abrirModalCobroOrden = (orden) => {
+        const subKeys = Object.keys(orden.subcuentas || {});
+        const pendientes = subKeys.filter(k => !orden.subcuentas[k].pagada);
+        setModalCobrarActiva(orden);
+        setModoCobroActiva(pendientes.length > 1 ? 'comensales' : 'todo');
+        setComensalesSeleccionadosCobro(pendientes);
+      };
+
+      const cobrarOrdenActiva = (orden, metodoElegido, soloSeleccionados = false) => {
         const ahora = new Date();
         const horaStr = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const fechaStr = ahora.toLocaleDateString('es-SV');
-        const montoACobrar = orden.saldoPendiente > 0 ? orden.saldoPendiente : orden.monto;
+
+        let montoACobrar = 0;
+        let etiquetaCobro = '';
+        const nuevasSubcuentas = { ...(orden.subcuentas || {}) };
+
+        if (soloSeleccionados && comensalesSeleccionadosCobro.length > 0) {
+          comensalesSeleccionadosCobro.forEach(nom => {
+            if (nuevasSubcuentas[nom] && !nuevasSubcuentas[nom].pagada) {
+              montoACobrar += nuevasSubcuentas[nom].monto;
+              nuevasSubcuentas[nom] = {
+                ...nuevasSubcuentas[nom],
+                pagada: true,
+                metodoPago: metodoElegido
+              };
+            }
+          });
+          etiquetaCobro = `Subcuenta (${comensalesSeleccionadosCobro.join(' + ')}) - ${orden.destino}`;
+        } else {
+          montoACobrar = orden.saldoPendiente > 0 ? orden.saldoPendiente : orden.monto;
+          Object.keys(nuevasSubcuentas).forEach(nom => {
+            if (!nuevasSubcuentas[nom].pagada) {
+              nuevasSubcuentas[nom] = { ...nuevasSubcuentas[nom], pagada: true, metodoPago: metodoElegido };
+            }
+          });
+          etiquetaCobro = orden.destino;
+        }
+
+        if (montoACobrar <= 0) return;
+
         let txId = orden.transaccionId || null;
 
         if (metodoElegido === 'fiado') {
-          actualizarDirectorioCliente(orden.clienteNombre || 'Cliente sin nombre', orden.clienteTel, orden.clienteDir, montoACobrar, true, orden.detalle, fechaStr, horaStr);
+          const nombreDeudor = (soloSeleccionados && comensalesSeleccionadosCobro.length === 1)
+            ? comensalesSeleccionadosCobro[0]
+            : (orden.clienteNombre || comensalesSeleccionadosCobro.join(', ') || 'Cliente sin nombre');
+          actualizarDirectorioCliente(nombreDeudor, orden.clienteTel, orden.clienteDir, montoACobrar, true, etiquetaCobro, fechaStr, horaStr);
         } else {
           txId = Date.now();
           setTransacciones(prev => [{
@@ -1073,8 +1194,8 @@
             timestamp: ahora.getTime(),
             monto: montoACobrar,
             metodo: metodoElegido,
-            destino: orden.destino,
-            detalle: orden.montoPagado > 0 ? `Saldo extra Orden ${formatearNumeroOrden(orden.numero)}: ${orden.detalle}` : orden.detalle,
+            destino: etiquetaCobro,
+            detalle: orden.detalle,
             hora: horaStr,
             fecha: fechaStr
           }, ...prev]);
@@ -1083,20 +1204,26 @@
           }
         }
 
+        const nuevoPagadoTotal = (orden.montoPagado || 0) + montoACobrar;
+        const nuevoSaldoPendiente = Math.max(0, orden.monto - nuevoPagadoTotal);
+        const quedoTotalmentePagada = nuevoSaldoPendiente <= 0.01;
+
         setOrdenesActivas(prev => prev.map(o => o.id === orden.id ? {
           ...o,
           transaccionId: txId,
-          pagada: true,
-          montoPagado: o.monto,
-          saldoPendiente: 0,
-          metodoPago: metodoElegido
+          subcuentas: nuevasSubcuentas,
+          pagada: quedoTotalmentePagada,
+          montoPagado: nuevoPagadoTotal,
+          saldoPendiente: nuevoSaldoPendiente,
+          metodoPago: quedoTotalmentePagada ? metodoElegido : 'parcial'
         } : o));
+
         setModalCobrarActiva(null);
       };
 
       const marcarComoEntregada = (orden) => {
         if (!orden.pagada) {
-          setModalCobrarActiva(orden);
+          abrirModalCobroOrden(orden);
           return;
         }
         setOrdenesCompletadasHoy(prev => [{
@@ -1223,27 +1350,33 @@
       const totalFiadosCalle = clientes.reduce((a, b) => a + (b.saldoFiado || 0), 0);
       const progresoMeta = config.metaDiaria > 0 ? Math.min(100, Math.round((sumVentas / config.metaDiaria) * 100)) : 0;
 
+      const totalSeleccionadoComensales = modalCobrarActiva && modalCobrarActiva.subcuentas
+        ? comensalesSeleccionadosCobro.reduce((sum, nom) => sum + (modalCobrarActiva.subcuentas[nom]?.monto || 0), 0)
+        : 0;
+
       return (
         <div className="w-full max-w-6xl mx-auto min-h-screen flex flex-col justify-between p-3 sm:p-5 pb-28">
           
-          {/* HEADER LIMPIO SIN BOTONES REDUNDANTES */}
           <header className="liquid-glass rounded-3xl p-3.5 sm:px-5 mb-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 min-w-0">
               {config.logo ? (
                 <img src={config.logo} alt="Logo" className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover border border-white shrink-0" />
               ) : (
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-neutral-900 text-white flex items-center justify-center font-black text-lg shrink-0">
-                  🫓
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-neutral-900 text-white flex flex-col items-center justify-center shrink-0">
+                  <span className="font-black text-xs tracking-tighter leading-none">2FQ</span>
                 </div>
               )}
               <div className="truncate">
-                <h1 className="font-black text-sm sm:text-base text-neutral-900 leading-tight truncate">{config.negocio}</h1>
+                <div className="flex items-center gap-1.5">
+                  <h1 className="font-black text-sm sm:text-base text-neutral-900 leading-tight truncate">{config.negocio}</h1>
+                  <span className="px-1.5 py-0.5 rounded-md bg-neutral-900 text-white font-black text-[9px] tracking-tight shrink-0">2FQ</span>
+                </div>
                 <p className="text-[11px] font-semibold text-neutral-500 truncate">
                   {vista === 'pos' ? (
                     `${ordenEditando ? `Editando ${formatearNumeroOrden(ordenEditando.numero)}` : `Orden ${formatearNumeroOrden(contadorOrden)}`} • ${
                       nombreCliente.trim() ? nombreCliente.trim() : (tipoServicio === 'mesa' ? 'Comer aquí' : tipoServicio === 'llevar' ? 'Para llevar' : 'Delivery')
                     }`
-                  ) : config.horario}
+                  ) : `${config.horario} • Too Fast & Quick`}
                 </p>
               </div>
             </div>
@@ -1276,11 +1409,9 @@
             </div>
           </header>
 
-          {/* VISTA PRINCIPAL (1): ÓRDENES ACTIVAS EN PLANCHA */}
           {vista === 'activas' && (
             <div className="flex-1 overflow-y-auto space-y-3">
               
-              {/* Barra de Estado de Plancha y Botón Único de Nueva Orden */}
               <div className="liquid-glass rounded-3xl p-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-4">
                   <div>
@@ -1314,76 +1445,100 @@
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {ordenesActivas.map(orden => (
-                    <div key={orden.id} className="liquid-glass p-4 rounded-3xl flex flex-col justify-between space-y-3">
-                      <div className="flex justify-between items-start">
-                        <div className="pr-2">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="px-2 py-0.5 rounded-lg bg-neutral-900 text-white font-mono font-black text-xs">
-                              {formatearNumeroOrden(orden.numero)}
-                            </span>
-                            <span className="font-black text-sm text-neutral-900">{orden.destino}</span>
-                            <span className="text-[10px] font-mono text-neutral-500">• {orden.hora}</span>
+                  {ordenesActivas.map(orden => {
+                    const subKeys = Object.keys(orden.subcuentas || {});
+                    const tieneMultiplesSubcuentas = subKeys.length > 1;
+
+                    return (
+                      <div key={orden.id} className="liquid-glass p-4 rounded-3xl flex flex-col justify-between space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div className="pr-2">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="px-2 py-0.5 rounded-lg bg-neutral-900 text-white font-mono font-black text-xs">
+                                {formatearNumeroOrden(orden.numero)}
+                              </span>
+                              <span className="font-black text-sm text-neutral-900">{orden.destino}</span>
+                              <span className="text-[10px] font-mono text-neutral-500">• {orden.hora}</span>
+                            </div>
+                            <p className="text-xs text-neutral-700 font-medium mt-2 leading-relaxed">{orden.detalle}</p>
+
+                            {tieneMultiplesSubcuentas && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {subKeys.map(nom => {
+                                  const sub = orden.subcuentas[nom];
+                                  return (
+                                    <span
+                                      key={nom}
+                                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                        sub.pagada
+                                          ? 'bg-emerald-500/15 text-emerald-800 border-emerald-500/30 line-through opacity-75'
+                                          : 'bg-white/80 text-neutral-800 border-white'
+                                      }`}
+                                    >
+                                      {nom}: ${sub.monto.toFixed(2)}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
-                          <p className="text-xs text-neutral-700 font-medium mt-2 leading-relaxed">{orden.detalle}</p>
+
+                          <div className="text-right shrink-0">
+                            <span className="font-mono font-black text-base text-neutral-900 block">${orden.monto.toFixed(2)}</span>
+                            {orden.montoPagado > 0 && !orden.pagada && (
+                              <span className="text-[9px] font-bold text-amber-800 bg-amber-200/70 px-1.5 py-0.5 rounded-md">
+                                Resta: ${orden.saldoPendiente.toFixed(2)}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="text-right shrink-0">
-                          <span className="font-mono font-black text-base text-neutral-900 block">${orden.monto.toFixed(2)}</span>
-                          {orden.montoPagado > 0 && !orden.pagada && (
-                            <span className="text-[9px] font-bold text-amber-800 bg-amber-200/70 px-1.5 py-0.5 rounded-md">
-                              Falta: ${orden.saldoPendiente.toFixed(2)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="pt-2.5 border-t border-white/60 flex items-center justify-between gap-1.5 flex-wrap">
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => iniciarEdicionOrdenActiva(orden)}
-                            className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white/90 text-neutral-900 border border-white shadow-2xs active:scale-95 transition"
-                          >
-                            ✏️ Editar
-                          </button>
-                          <button
-                            onClick={() => eliminarOrdenActiva(orden)}
-                            className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-rose-500/15 text-rose-700 border border-rose-500/25 active:scale-95 transition"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-
-                        <div className="flex items-center gap-1.5">
-                          {orden.pagada ? (
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-800 border border-emerald-500/30">
-                              ✓ Pagada ({orden.metodoPago})
-                            </span>
-                          ) : (
+                        <div className="pt-2.5 border-t border-white/60 flex items-center justify-between gap-1.5 flex-wrap">
+                          <div className="flex items-center gap-1.5">
                             <button
-                              onClick={() => setModalCobrarActiva(orden)}
-                              className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-amber-500/20 text-amber-900 border border-amber-500/40 active:scale-95 transition"
+                              onClick={() => iniciarEdicionOrdenActiva(orden)}
+                              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white/90 text-neutral-900 border border-white shadow-2xs active:scale-95 transition"
                             >
-                              💵 Cobrar {orden.montoPagado > 0 ? `$${orden.saldoPendiente.toFixed(2)}` : ''}
+                              ✏️ Editar
                             </button>
-                          )}
+                            <button
+                              onClick={() => eliminarOrdenActiva(orden)}
+                              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-rose-500/15 text-rose-700 border border-rose-500/25 active:scale-95 transition"
+                            >
+                              🗑️
+                            </button>
+                          </div>
 
-                          <button
-                            onClick={() => marcarComoEntregada(orden)}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold liquid-glass-dark text-white active:scale-95 transition"
-                          >
-                            ✓ Entregada
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            {orden.pagada ? (
+                              <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-800 border border-emerald-500/30">
+                                ✓ Pagada
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => abrirModalCobroOrden(orden)}
+                                className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-amber-500/20 text-amber-900 border border-amber-500/40 active:scale-95 transition"
+                              >
+                                💵 Cobrar {orden.montoPagado > 0 ? `$${orden.saldoPendiente.toFixed(2)}` : ''}
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => marcarComoEntregada(orden)}
+                              className="px-3 py-1.5 rounded-xl text-xs font-bold liquid-glass-dark text-white active:scale-95 transition"
+                            >
+                              ✓ Entregada
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
           )}
 
-          {/* VISTA (2): TOMAR / EDITAR ORDEN */}
           {vista === 'pos' && (
             <div className="flex-1 flex flex-col lg:flex-row gap-4 pb-20 lg:pb-2">
               
@@ -1394,7 +1549,7 @@
                       <span className="font-black text-amber-950 block">
                         ✏️ Editando Orden {formatearNumeroOrden(ordenEditando.numero)} ({ordenEditando.destino})
                       </span>
-                      <span className="text-[10px] text-amber-900">Ajusta cantidades y guarda los cambios</span>
+                      <span className="text-[10px] text-amber-900">Ajusta cantidades por comensal y guarda</span>
                     </div>
                     <button
                       onClick={cancelarEdicionOrdenActiva}
@@ -1404,6 +1559,60 @@
                     </button>
                   </div>
                 )}
+
+                <div className="liquid-glass rounded-2xl p-2 mb-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                  <span className="text-[10px] font-black uppercase text-neutral-500 pl-1.5 shrink-0">Cuenta de:</span>
+                  {comensalesList.map(nom => {
+                    const montoSub = calcularMontoMapa(itemsByComensal[nom]);
+                    const activo = comensalActivo === nom;
+                    return (
+                      <button
+                        key={nom}
+                        type="button"
+                        onClick={() => setComensalActivo(nom)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition shrink-0 ${
+                          activo ? 'liquid-glass-dark text-white shadow-xs' : 'bg-white/75 text-neutral-700'
+                        }`}
+                      >
+                        <span>👤 {nom}</span>
+                        {montoSub > 0 && (
+                          <span className={`font-mono text-[10px] px-1.5 py-0.2 rounded-md ${activo ? 'bg-white/20 text-white' : 'bg-neutral-200 text-neutral-800'}`}>
+                            ${montoSub.toFixed(2)}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+
+                  {mostrandoInputComensal ? (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder="Nombre amigo..."
+                        value={nuevoComensalInput}
+                        onChange={e => setNuevoComensalInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && agregarComensal()}
+                        className="bg-white rounded-xl px-2.5 py-1 text-xs font-bold w-28 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => agregarComensal()}
+                        className="px-2.5 py-1 bg-emerald-600 text-white rounded-xl text-xs font-bold"
+                      >
+                        ✓
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setMostrandoInputComensal(true)}
+                      className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white/60 hover:bg-white text-neutral-800 border border-dashed border-neutral-400 whitespace-nowrap shrink-0"
+                    >
+                      + Separar amigo
+                    </button>
+                  )}
+                </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 mb-3">
                   <input
@@ -1428,11 +1637,11 @@
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 overflow-y-auto max-h-[calc(100vh-310px)] lg:max-h-[calc(100vh-225px)] pr-0.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 overflow-y-auto max-h-[calc(100vh-355px)] lg:max-h-[calc(100vh-270px)] pr-0.5">
                   {menuVisiblePos.map(prod => {
-                    const cantMaiz = ordenActual[`${prod.id}|maiz`] || 0;
-                    const cantArroz = ordenActual[`${prod.id}|arroz`] || 0;
-                    const cantSimple = ordenActual[`${prod.id}|simple`] || 0;
+                    const cantMaiz = ordenActualComensal[`${prod.id}|maiz`] || 0;
+                    const cantArroz = ordenActualComensal[`${prod.id}|arroz`] || 0;
+                    const cantSimple = ordenActualComensal[`${prod.id}|simple`] || 0;
 
                     return (
                       <div key={prod.id} className="liquid-glass p-3.5 rounded-3xl flex flex-col justify-between gap-2">
@@ -1490,7 +1699,6 @@
                 </div>
               </div>
 
-              {/* PANEL DERECHO EN ESCRITORIO / TABLET HORIZONTAL */}
               <aside className="hidden lg:flex w-80 xl:w-96 liquid-glass rounded-3xl p-4 flex-col justify-between shrink-0 max-h-[calc(100vh-185px)]">
                 <div className="flex flex-col min-h-0 flex-1">
                   <div className="flex items-center justify-between pb-2.5 border-b border-white/60">
@@ -1510,35 +1718,52 @@
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto py-2 divide-y divide-white/50">
+                  <div className="flex-1 overflow-y-auto py-2 space-y-3">
                     {itemsTotalCount === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center py-10 text-neutral-400">
                         <span className="text-3xl mb-1">🧾</span>
                         <p className="text-xs font-semibold">Selecciona pupusas o bebidas del menú</p>
                       </div>
                     ) : (
-                      Object.entries(ordenActual).map(([key, cant]) => {
-                        const [prodId, masa] = key.split('|');
-                        const prod = listaMenuSegura.find(m => m.id === prodId);
-                        if (!prod) return null;
-                        const precioUnit = prod.esPupusa ? (masa === 'arroz' ? prod.precioArroz : prod.precioMaiz) : prod.precio;
+                      comensalesList.map(nomComensal => {
+                        const subMap = itemsByComensal[nomComensal] || {};
+                        const entries = Object.entries(subMap);
+                        if (entries.length === 0) return null;
+                        const subTotal = calcularMontoMapa(subMap);
+
                         return (
-                          <div key={key} className="py-2 flex items-center justify-between text-xs">
-                            <div className="pr-2 min-w-0">
-                              <p className="font-bold text-neutral-900 truncate">
-                                {prod.emoji} {prod.nombre}{' '}
-                                {prod.esPupusa && (
-                                  <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-bold ${masa === 'arroz' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                                    {masa === 'arroz' ? 'Arroz' : 'Maíz'}
-                                  </span>
-                                )}
-                              </p>
-                              <p className="text-[10px] font-mono text-neutral-500">${(cant * precioUnit).toFixed(2)}</p>
+                          <div key={nomComensal} className="bg-white/60 rounded-2xl p-2.5 border border-white">
+                            <div className="flex justify-between items-center pb-1 mb-1 border-b border-neutral-200/60">
+                              <span className="text-[11px] font-black text-neutral-800">👤 {nomComensal}</span>
+                              <span className="font-mono text-xs font-black text-neutral-900">${subTotal.toFixed(2)}</span>
                             </div>
-                            <div className="flex items-center gap-1 bg-white/90 px-1.5 py-0.5 rounded-lg shrink-0">
-                              <button onClick={() => ajustarCantidad(key, -1)} className="w-5 h-5 font-bold text-neutral-500">-</button>
-                              <span className="font-mono font-bold text-xs w-4 text-center">{cant}</span>
-                              <button onClick={() => ajustarCantidad(key, 1)} className="w-5 h-5 font-bold text-neutral-900">+</button>
+                            <div className="divide-y divide-neutral-200/40">
+                              {entries.map(([key, cant]) => {
+                                const [prodId, masa] = key.split('|');
+                                const prod = listaMenuSegura.find(m => m.id === prodId);
+                                if (!prod) return null;
+                                const precioUnit = prod.esPupusa ? (masa === 'arroz' ? prod.precioArroz : prod.precioMaiz) : prod.precio;
+                                return (
+                                  <div key={key} className="py-1.5 flex items-center justify-between text-xs">
+                                    <div className="pr-2 min-w-0">
+                                      <p className="font-bold text-neutral-900 truncate">
+                                        {prod.emoji} {prod.nombre}{' '}
+                                        {prod.esPupusa && (
+                                          <span className={`text-[9px] px-1 py-0.2 rounded font-bold ${masa === 'arroz' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                                            {masa === 'arroz' ? 'Arroz' : 'Maíz'}
+                                          </span>
+                                        )}
+                                      </p>
+                                      <p className="text-[10px] font-mono text-neutral-500">${(cant * precioUnit).toFixed(2)}</p>
+                                    </div>
+                                    <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-lg shrink-0">
+                                      <button onClick={() => ajustarCantidad(key, -1, nomComensal)} className="w-4 h-4 font-bold text-neutral-500">-</button>
+                                      <span className="font-mono font-bold text-xs w-3 text-center">{cant}</span>
+                                      <button onClick={() => ajustarCantidad(key, 1, nomComensal)} className="w-4 h-4 font-bold text-neutral-900">+</button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         );
@@ -1577,7 +1802,6 @@
                 </div>
               </aside>
 
-              {/* BARRA NEGRA FLOTANTE EN MÓVIL */}
               <div className="lg:hidden fixed bottom-20 left-3 right-3 max-w-lg mx-auto z-30">
                 {ordenEditando ? (
                   <button
@@ -1617,7 +1841,6 @@
             </div>
           )}
 
-          {/* VISTA (3): GASTOS */}
           {vista === 'gastos' && (
             <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
               <div className={`liquid-glass p-4 rounded-3xl ${gastoEditandoId ? 'ring-2 ring-amber-500' : ''}`}>
@@ -1692,7 +1915,6 @@
             </div>
           )}
 
-          {/* VISTA (4): CLIENTES Y FIADOS */}
           {vista === 'clientes' && (
             <div className="flex-1 overflow-y-auto space-y-3">
               <div className="liquid-glass p-4 rounded-3xl flex justify-between items-center max-w-2xl mx-auto">
@@ -1775,7 +1997,6 @@
             </div>
           )}
 
-          {/* VISTA (5): RESUMEN FINANCIERO */}
           {vista === 'resumen' && (
             <div className="flex-1 overflow-y-auto space-y-3 max-w-3xl mx-auto w-full">
               <div className="grid grid-cols-3 gap-1 p-1 liquid-glass rounded-2xl text-xs font-bold">
@@ -1899,7 +2120,6 @@
             </div>
           )}
 
-          {/* MODAL 1: MODALIDAD DEL PEDIDO + NOMBRE DEL CLIENTE SIEMPRE VISIBLE */}
           {modalServicio && (
             <div className="fixed inset-0 bg-black/45 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 z-50">
               <div className="liquid-glass-solid rounded-[2rem] p-5 w-full max-w-sm shadow-2xl space-y-3.5">
@@ -1916,7 +2136,6 @@
                   </button>
                 </div>
 
-                {/* Selector de Modalidad */}
                 <div className={`grid ${config.haceDelivery ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 p-1 bg-neutral-100 rounded-2xl text-xs font-bold`}>
                   <button onClick={() => setTipoServicio('mesa')} className={`py-2 rounded-xl transition ${tipoServicio === 'mesa' ? 'liquid-glass-dark text-white' : 'text-neutral-600'}`}>Comer aquí</button>
                   <button onClick={() => setTipoServicio('llevar')} className={`py-2 rounded-xl transition ${tipoServicio === 'llevar' ? 'liquid-glass-dark text-white' : 'text-neutral-600'}`}>Llevar</button>
@@ -1925,7 +2144,6 @@
                   )}
                 </div>
 
-                {/* Nombre del Cliente SIEMPRE solicitado (con sugerencias rápidas de frecuentes) */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold uppercase text-neutral-500 block">Nombre del Cliente</label>
                   {clientes.length > 0 && (
@@ -1951,7 +2169,6 @@
                   />
                 </div>
 
-                {/* Opciones específicas según Modalidad */}
                 {tipoServicio === 'mesa' ? (
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-neutral-500 block">Selecciona la Mesa</label>
@@ -1998,7 +2215,7 @@
 
                 <button
                   type="button"
-                  onClick={() => setModalServicio(false)}
+                  onClick={confirmarModalidadYCliente}
                   className="w-full py-3.5 liquid-glass-dark text-white rounded-2xl font-bold text-xs shadow-md active:scale-98 transition"
                 >
                   Continuar al Menú →
@@ -2007,7 +2224,6 @@
             </div>
           )}
 
-          {/* MODAL 2: CONFIRMAR COMANDA CON RESUMEN DESGLOSADO */}
           {modalComanda && (
             <div className="fixed inset-0 bg-black/45 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 z-50">
               <div className="liquid-glass-solid rounded-[2rem] p-5 w-full max-w-md shadow-2xl space-y-3">
@@ -2021,33 +2237,50 @@
                   <button onClick={() => setModalComanda(false)} className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center font-bold text-xs text-neutral-600">✕</button>
                 </div>
 
-                <div className="bg-neutral-50 border border-neutral-200/80 rounded-2xl p-3 max-h-44 overflow-y-auto divide-y divide-neutral-200/60">
-                  {Object.entries(ordenActual).map(([key, cant]) => {
-                    const [prodId, masa] = key.split('|');
-                    const prod = listaMenuSegura.find(m => m.id === prodId);
-                    if (!prod) return null;
-                    const precioUnit = prod.esPupusa ? (masa === 'arroz' ? prod.precioArroz : prod.precioMaiz) : prod.precio;
-                    return (
-                      <div key={key} className="py-1.5 first:pt-0 last:pb-0 flex items-center justify-between text-xs">
-                        <div className="pr-2">
-                          <p className="font-bold text-neutral-900">
-                            {prod.emoji} {prod.nombre}{' '}
-                            {prod.esPupusa && (
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${masa === 'arroz' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                                {masa === 'arroz' ? 'Arroz' : 'Maíz'}
-                              </span>
-                            )}
-                          </p>
-                          <p className="text-[10px] font-mono text-neutral-500">
-                            {cant} × ${precioUnit.toFixed(2)} = <b className="text-neutral-800">${(cant * precioUnit).toFixed(2)}</b>
-                          </p>
-                        </div>
+                <div className="bg-neutral-50 border border-neutral-200/80 rounded-2xl p-3 max-h-48 overflow-y-auto space-y-2.5">
+                  {comensalesList.map(nomComensal => {
+                    const subMap = itemsByComensal[nomComensal] || {};
+                    const entries = Object.entries(subMap);
+                    if (entries.length === 0) return null;
+                    const subTotal = calcularMontoMapa(subMap);
 
-                        <div className="flex items-center gap-1.5 bg-white px-1.5 py-0.5 rounded-xl border border-neutral-200 shrink-0">
-                          <button onClick={() => ajustarCantidad(key, -1)} className="w-5 h-5 flex items-center justify-center font-bold text-neutral-500">-</button>
-                          <span className="font-mono font-bold text-xs w-4 text-center">{cant}</span>
-                          <button onClick={() => ajustarCantidad(key, 1)} className="w-5 h-5 flex items-center justify-center font-bold text-neutral-900">+</button>
-                        </div>
+                    return (
+                      <div key={nomComensal} className="space-y-1">
+                        {comensalesList.length > 1 && (
+                          <div className="flex justify-between text-[11px] font-black text-neutral-700 bg-neutral-200/60 px-2 py-0.5 rounded-lg">
+                            <span>👤 {nomComensal}</span>
+                            <span className="font-mono">${subTotal.toFixed(2)}</span>
+                          </div>
+                        )}
+                        {entries.map(([key, cant]) => {
+                          const [prodId, masa] = key.split('|');
+                          const prod = listaMenuSegura.find(m => m.id === prodId);
+                          if (!prod) return null;
+                          const precioUnit = prod.esPupusa ? (masa === 'arroz' ? prod.precioArroz : prod.precioMaiz) : prod.precio;
+                          return (
+                            <div key={key} className="py-1 flex items-center justify-between text-xs">
+                              <div className="pr-2">
+                                <p className="font-bold text-neutral-900">
+                                  {prod.emoji} {prod.nombre}{' '}
+                                  {prod.esPupusa && (
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${masa === 'arroz' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                                      {masa === 'arroz' ? 'Arroz' : 'Maíz'}
+                                    </span>
+                                  )}
+                                </p>
+                                <p className="text-[10px] font-mono text-neutral-500">
+                                  {cant} × ${precioUnit.toFixed(2)} = <b className="text-neutral-800">${(cant * precioUnit).toFixed(2)}</b>
+                                </p>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 bg-white px-1.5 py-0.5 rounded-xl border border-neutral-200 shrink-0">
+                                <button onClick={() => ajustarCantidad(key, -1, nomComensal)} className="w-5 h-5 flex items-center justify-center font-bold text-neutral-500">-</button>
+                                <span className="font-mono font-bold text-xs w-4 text-center">{cant}</span>
+                                <button onClick={() => ajustarCantidad(key, 1, nomComensal)} className="w-5 h-5 flex items-center justify-center font-bold text-neutral-900">+</button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -2092,10 +2325,6 @@
                   </div>
                 )}
 
-                <button onClick={() => setModalDividir(true)} className="w-full py-2 bg-neutral-100 rounded-xl text-xs font-bold text-neutral-700">
-                  ➗ Dividir cuenta entre amigos
-                </button>
-
                 <button onClick={crearOrdenActiva} className="w-full py-4 liquid-glass-dark text-white rounded-3xl font-black text-sm shadow-lg">
                   Enviar a Plancha (Orden {formatearNumeroOrden(contadorOrden)})
                 </button>
@@ -2103,33 +2332,138 @@
             </div>
           )}
 
-          {/* MODAL 3: COBRAR ORDEN ACTIVA PENDIENTE */}
           {modalCobrarActiva && (
             <div className="fixed inset-0 bg-black/45 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 z-50">
-              <div className="liquid-glass-solid rounded-[2rem] p-5 w-full max-w-sm shadow-2xl space-y-3">
+              <div className="liquid-glass-solid rounded-[2rem] p-5 w-full max-w-md shadow-2xl space-y-3">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-[10px] font-bold uppercase text-neutral-500">
-                      Orden {formatearNumeroOrden(modalCobrarActiva.numero)} • {modalCobrarActiva.montoPagado > 0 ? 'Cobrar Saldo Extra' : 'Cobrar Orden'}
+                      Orden {formatearNumeroOrden(modalCobrarActiva.numero)} • {modalCobrarActiva.destino}
                     </p>
                     <h3 className="font-black text-base text-neutral-900">
-                      {modalCobrarActiva.destino} • ${(modalCobrarActiva.saldoPendiente > 0 ? modalCobrarActiva.saldoPendiente : modalCobrarActiva.monto).toFixed(2)}
+                      Pendiente: ${(modalCobrarActiva.saldoPendiente > 0 ? modalCobrarActiva.saldoPendiente : modalCobrarActiva.monto).toFixed(2)}
                     </h3>
                   </div>
                   <button onClick={() => setModalCobrarActiva(null)} className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center font-bold text-xs text-neutral-600">✕</button>
                 </div>
 
+                <div className="grid grid-cols-3 gap-1 p-1 bg-neutral-100 rounded-2xl text-[11px] font-bold">
+                  <button
+                    onClick={() => setModoCobroActiva('todo')}
+                    className={`py-2 rounded-xl transition ${modoCobroActiva === 'todo' ? 'liquid-glass-dark text-white' : 'text-neutral-600'}`}
+                  >
+                    Todo junto
+                  </button>
+                  <button
+                    onClick={() => setModoCobroActiva('comensales')}
+                    className={`py-2 rounded-xl transition ${modoCobroActiva === 'comensales' ? 'liquid-glass-dark text-white' : 'text-neutral-600'}`}
+                  >
+                    Por Comensal
+                  </button>
+                  <button
+                    onClick={() => setModoCobroActiva('iguales')}
+                    className={`py-2 rounded-xl transition ${modoCobroActiva === 'iguales' ? 'liquid-glass-dark text-white' : 'text-neutral-600'}`}
+                  >
+                    Partes iguales
+                  </button>
+                </div>
+
+                {modoCobroActiva === 'comensales' && (
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-3 space-y-2">
+                    <p className="text-[11px] font-bold text-neutral-600">Marca uno o une varios amigos para cobrar:</p>
+                    <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                      {Object.entries(modalCobrarActiva.subcuentas || {}).map(([nom, sub]) => {
+                        const marcado = comensalesSeleccionadosCobro.includes(nom);
+                        return (
+                          <button
+                            key={nom}
+                            type="button"
+                            disabled={sub.pagada}
+                            onClick={() => {
+                              if (marcado) {
+                                setComensalesSeleccionadosCobro(prev => prev.filter(n => n !== nom));
+                              } else {
+                                setComensalesSeleccionadosCobro(prev => [...prev, nom]);
+                              }
+                            }}
+                            className={`w-full p-2.5 rounded-xl border flex items-center justify-between text-xs font-bold transition ${
+                              sub.pagada
+                                ? 'bg-emerald-50 border-emerald-200 text-emerald-800 opacity-70 cursor-not-allowed'
+                                : marcado
+                                ? 'bg-neutral-900 text-white border-neutral-900'
+                                : 'bg-white border-neutral-200 text-neutral-800'
+                            }`}
+                          >
+                            <span className="flex items-center gap-2">
+                              <span>{sub.pagada ? '✓' : marcado ? '☑' : '☐'}</span>
+                              <span>👤 {nom}</span>
+                            </span>
+                            <span className="font-mono">
+                              {sub.pagada ? `Pagado ($${sub.monto.toFixed(2)})` : `$${sub.monto.toFixed(2)}`}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="pt-1 border-t border-neutral-200 flex justify-between items-center text-xs">
+                      <span className="font-bold text-neutral-500">Total seleccionado ({comensalesSeleccionadosCobro.length}):</span>
+                      <span className="font-mono text-lg font-black text-neutral-900">${totalSeleccionadoComensales.toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+
+                {modoCobroActiva === 'iguales' && (
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-3 text-center space-y-2">
+                    <div className="flex items-center justify-center gap-4">
+                      <button onClick={() => setPersonasDividirActiva(Math.max(2, personasDividirActiva - 1))} className="w-8 h-8 rounded-xl bg-white border font-bold">-</button>
+                      <div>
+                        <span className="text-2xl font-black font-mono">{personasDividirActiva}</span>
+                        <span className="text-[10px] block uppercase font-bold text-neutral-500">Personas</span>
+                      </div>
+                      <button onClick={() => setPersonasDividirActiva(personasDividirActiva + 1)} className="w-8 h-8 rounded-xl bg-white border font-bold">+</button>
+                    </div>
+                    <p className="text-xs font-bold text-emerald-700 bg-emerald-50 py-1.5 rounded-xl">
+                      Cada uno paga: <span className="font-mono text-base font-black">${((modalCobrarActiva.saldoPendiente > 0 ? modalCobrarActiva.saldoPendiente : modalCobrarActiva.monto) / personasDividirActiva).toFixed(2)}</span>
+                    </p>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-2 text-xs font-bold">
-                  <button onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'efectivo')} className="p-3 rounded-2xl bg-neutral-100 text-neutral-900 text-left">💵 Efectivo</button>
-                  <button onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'wompi')} className="p-3 rounded-2xl bg-purple-100 text-purple-900 text-left">💳 Wompi / POS</button>
-                  <button onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'transferencia')} className="p-3 rounded-2xl bg-blue-100 text-blue-900 text-left">📱 Transferencia</button>
-                  <button onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'fiado')} className="p-3 rounded-2xl bg-amber-100 text-amber-900 text-left">🤝 Queda Fiado</button>
+                  <button
+                    disabled={modoCobroActiva === 'comensales' && totalSeleccionadoComensales <= 0}
+                    onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'efectivo', modoCobroActiva === 'comensales')}
+                    className="p-3 rounded-2xl bg-neutral-100 text-neutral-900 text-left disabled:opacity-40"
+                  >
+                    💵 Efectivo
+                  </button>
+                  <button
+                    disabled={modoCobroActiva === 'comensales' && totalSeleccionadoComensales <= 0}
+                    onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'wompi', modoCobroActiva === 'comensales')}
+                    className="p-3 rounded-2xl bg-purple-100 text-purple-900 text-left disabled:opacity-40"
+                  >
+                    💳 Wompi / POS
+                  </button>
+                  <button
+                    disabled={modoCobroActiva === 'comensales' && totalSeleccionadoComensales <= 0}
+                    onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'transferencia', modoCobroActiva === 'comensales')}
+                    className="p-3 rounded-2xl bg-blue-100 text-blue-900 text-left disabled:opacity-40"
+                  >
+                    📱 Transferencia
+                  </button>
+                  <button
+                    disabled={modoCobroActiva === 'comensales' && totalSeleccionadoComensales <= 0}
+                    onClick={() => cobrarOrdenActiva(modalCobrarActiva, 'fiado', modoCobroActiva === 'comensales')}
+                    className="p-3 rounded-2xl bg-amber-100 text-amber-900 text-left disabled:opacity-40"
+                  >
+                    🤝 Queda Fiado
+                  </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setModalVerQr(true)}
-                  className="w-full py-3 bg-blue-600 text-white rounded-2xl text-xs font-bold shadow-sm active:scale-95 transition"
+                  className="w-full py-2.5 bg-blue-600 text-white rounded-2xl text-xs font-bold shadow-sm active:scale-95 transition"
                 >
                   📲 Ver QR / Cuenta ({config.bancoNombre})
                 </button>
@@ -2137,7 +2471,6 @@
             </div>
           )}
 
-          {/* MODAL 4: MOSTRAR QR BANCARIO */}
           {modalVerQr && (
             <div className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 z-[999]">
               <div className="liquid-glass-solid rounded-[2rem] p-6 w-full max-w-xs text-center space-y-3 shadow-2xl relative">
@@ -2177,29 +2510,6 @@
             </div>
           )}
 
-          {/* MODAL 5: DIVIDIR CUENTA */}
-          {modalDividir && (
-            <div className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 z-[999]">
-              <div className="liquid-glass-solid rounded-[2rem] p-5 w-full max-w-xs text-center space-y-3 shadow-2xl">
-                <h4 className="font-bold text-sm">Dividir Total: ${totalOrden.toFixed(2)}</h4>
-                <div className="flex items-center justify-center gap-4 my-2">
-                  <button onClick={() => setPersonasDividir(Math.max(2, personasDividir - 1))} className="w-10 h-10 rounded-2xl bg-neutral-100 font-bold text-lg">-</button>
-                  <div>
-                    <p className="text-3xl font-black font-mono">{personasDividir}</p>
-                    <p className="text-[10px] font-bold uppercase text-neutral-500">Personas</p>
-                  </div>
-                  <button onClick={() => setPersonasDividir(personasDividir + 1)} className="w-10 h-10 rounded-2xl bg-neutral-100 font-bold text-lg">+</button>
-                </div>
-                <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl">
-                  <p className="text-[11px] text-emerald-800">Cada uno paga:</p>
-                  <p className="text-2xl font-black font-mono text-emerald-700">${(totalOrden / personasDividir).toFixed(2)}</p>
-                </div>
-                <button onClick={() => setModalDividir(false)} className="w-full py-3 liquid-glass-dark text-white rounded-2xl font-bold text-xs">Listo</button>
-              </div>
-            </div>
-          )}
-
-          {/* BARRA DE NAVEGACIÓN INFERIOR LIQUID GLASS */}
           <nav className="fixed bottom-3 left-3 right-3 max-w-lg mx-auto liquid-glass rounded-3xl p-2 flex justify-around text-xs z-30 shadow-lg">
             <button onClick={() => setVista('activas')} className={`relative flex flex-col items-center py-1 px-3 rounded-2xl transition ${vista === 'activas' ? 'bg-neutral-900 text-white font-bold' : 'text-neutral-600'}`}>
               {ordenesActivas.length > 0 && (
